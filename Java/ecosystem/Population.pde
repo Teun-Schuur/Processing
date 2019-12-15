@@ -15,9 +15,9 @@ class Population{
     for(int i = 0; i < begin_pop; i++){
       creatures.add(new Creature(new PVector(random(width), random(height))));
     }
-    spontaneous_birth_rate = 1f; // x% chance per second for spaning a nieuw creature
+    spontaneous_birth_rate = 0f; // x% chance per second for spaning a nieuw creature
     death_rate = 0.2f;           // x% chance per second for despaning a creature
-    replication_rate = 0.0f;     // x% chance to replicate a creature per second
+    replication_rate = 0.3f;     // x% chance to replicate a creature per second
   }
 
   public void update(){
@@ -31,7 +31,8 @@ class Population{
       creatures_history[(int) round(timeSteps/60)] = creatures.size();
       evolution();
       float delta = spontaneous_birth_rate + (replication_rate - death_rate) * creatures.size();
-¿    }
+      println(delta);
+    }
   }
 
   public void show(){

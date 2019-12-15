@@ -1,7 +1,7 @@
 
 Population toine;
 void setup(){
-  size(1200, 800);
+  size(600, 600);
   frameRate(60);
   toine = new Population(5);
 }

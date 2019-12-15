@@ -13,9 +13,9 @@ class Creature{
   Creature(PVector location){
     this.location = location;
     this.velocity = new PVector(0, 0);
-    this.destination = new PVector(random(0, width), random(0, height));
+    this.destination = new PVector(random(this.location.x-50, this.location.x+50), random(this.location.y-50, this.location.y+50));
     this.acceleration = new PVector(0, 0);
-    size = 20;
+    size = 30;
     topspeed = 2.0f;
   }
 
@@ -28,12 +28,15 @@ class Creature{
   }
 
   private void toLocation(){
-    if(this.location.dist(this.destination) < 50){
-      this.destination = new PVector(random(0, width), random(0, height));
+    if(this.location.dist(this.destination) < 10){
+      do{
+        int distance = (int) random(50, 300);
+        this.destination = new PVector(random(this.location.x-distance, this.location.x+distance), random(this.location.y-distance, this.location.y+distance));
+      }while(destination.x>=width-size||destination.x<=0||destination.y>=height-size||destination.y<=0);
     }
     PVector dir = PVector.sub(this.destination, this.location);
     dir.normalize();
-    dir.mult(random(0.01, 0.1));
+    dir.mult(0.6);
     this.acceleration = dir;
   }
 
@@ -44,8 +47,8 @@ class Creature{
       location.x = 0;
     }
 
-    if (location.y > height) {
-      location.y = height;
+    if (location.y+size > height) {
+      location.y = height-size;
     }  else if (location.y < 0) {
       location.y = 0;
     }
