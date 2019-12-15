@@ -1,0 +1,53 @@
+{
+      "boxes": {
+            "0": {
+                  "color": -24762561, 
+                  "removeIfOffscreen": false, 
+                  "halt": true, 
+                  "x": 0, 
+                  "width": 1200, 
+                  "y": 550, 
+                  "height": 55
+            }, 
+            "1": {
+                  "color": -65536, 
+                  "removeIfOffscreen": true, 
+                  "halt": false, 
+                  "x": 0, 
+                  "width": 1200, 
+                  "y": 550, 
+                  "height": 55
+            }, 
+            "2": {
+                  "color": -16776961, 
+                  "removeIfOffscreen": true, 
+                  "halt": false, 
+                  "x": 0, 
+                  "width": 1200, 
+                  "y": 550, 
+                  "height": 55
+            }, 
+            "3": {
+                  "color": -16711936, 
+                  "removeIfOffscreen": true, 
+                  "halt": false, 
+                  "x": 0, 
+                  "width": 1200, 
+                  "y": 550, 
+                  "height": 55
+            }
+      }, 
+      "spriteSpeed": 5, 
+      "screen": [
+            1000, 
+            600
+      ], 
+      "spriteHeight": 30, 
+      "spriteMass": null, 
+      "frameRate": null, 
+      "backGround": -15030316, 
+      "spriteJumpVelocity": 10, 
+      "spriteForse": 0.3, 
+      "spriteWidth": 30, 
+      "spriteColor": -16777216
+}

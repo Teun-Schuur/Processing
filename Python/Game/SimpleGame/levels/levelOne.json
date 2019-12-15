@@ -1,0 +1,48 @@
+{
+      "boxes": {
+            "0": {
+		  "x": 0,
+		  "y": 750, 
+                  "width": 1200, 
+                  "height": 55,
+                  "color": -10140895, 
+                  "halt": true
+            }, 
+            "1": {
+                  "x": 500, 
+                  "y": 650, 
+                  "width": 120, 
+                  "height": 55,
+                  "color": -65536, 
+                  "respan": [-120, 1200], 
+                  "halt": false
+            }, 
+            "2": {
+                  "x": 1000, 
+                  "y": 550, 
+                  "width": 120, 
+                  "height": 55,
+                  "color": -16776961, 
+                  "respan": [-120, 1200],
+                  "halt": false
+            }, 
+            "3": {
+                  "x": 50, 
+                  "y": 300, 
+                  "width": 120, 
+                  "height": 55,
+                  "color": -16711936, 
+                  "respan": [-120, 1200], 
+                  "halt": false
+            }
+      }, 
+      "spriteSpeed": 4, 
+      "spriteHeight": 60, 
+      "spriteMass": 0.2,
+      "frameRate": null, 
+      "backGround": -15030316, 
+      "spriteJumpVelocity": 6, 
+      "spriteForse": 0.3, 
+      "spriteWidth": 30, 
+      "spriteColor": -16777216
+}                             
