@@ -2,37 +2,25 @@
 2500 limit
 */
 
-class Population{
-  static final int TIME_STEP = 60; // 60 / 15 = 4 times per second
-  int timeSteps = 0;
-  float spontaneous_birth_rate;
-  float death_rate;
-  float replication_rate;
+class Mutation{
+  static final int ONE_DAY = 10*60 // one day = 10 seconds
   ArrayList<Creature> creatures = new ArrayList<Creature>();
   int[] creatures_history = new int[100];
 
-  Population(int begin_pop){
+  Mutation(int begin_pop, float begin_speed){
     for(int i = 0; i < begin_pop; i++){
       creatures.add(new Creature(new PVector(random(width), random(height))));
+      creatures.get(i).speed = begin_speed;
     }
-    spontaneous_birth_rate = 0f; // x% chance per second for spaning a nieuw creature
-    death_rate = 0.2f;           // x% chance per second for despaning a creature
-    replication_rate = 0.3f;     // x% chance to replicate a creature per second
   }
 
   public void update(){
-    timeSteps++;
     for(int i = 0; i < creatures.size(); i++){
       Creature c = creatures.get(i);
       c.update();
       c.checkEdges();
     }
-    if(timeSteps % Population.TIME_STEP == 0){
-      creatures_history[(int) round(timeSteps/60)] = creatures.size();
-      evolution();
-      float delta = spontaneous_birth_rate + (replication_rate - death_rate) * creatures.size();
-      println(delta);
-    }
+    if(frameRate%ONE_DAY)
   }
 
   public void show(){

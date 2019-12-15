@@ -19,7 +19,7 @@ Population toine;
 public void setup(){
   
   frameRate(60);
-  toine = new Population(5);
+  toine = new Population(50);
 }
 
 public void draw(){
@@ -64,7 +64,8 @@ class Creature{
   Creature(PVector location){
     this.location = location;
     this.velocity = new PVector(0, 0);
-    this.destination = new PVector(random(this.location.x-50, this.location.x+50), random(this.location.y-50, this.location.y+50));
+    this.destination = new PVector(0, 0);
+    newDestination();
     this.acceleration = new PVector(0, 0);
     size = 30;
     topspeed = 2.0f;
@@ -72,36 +73,41 @@ class Creature{
 
   public void update(){
     // age++;
-    this.toLocation();
     this.velocity.add(this.acceleration);
     this.velocity.limit(topspeed);
     this.location.add(this.velocity);
+    this.toLocation();
+
   }
 
   private void toLocation(){
-    if(this.location.dist(this.destination) < 10){
-      do{
-        int distance = (int) random(50, 300);
-        this.destination = new PVector(random(this.location.x-distance, this.location.x+distance), random(this.location.y-distance, this.location.y+distance));
-      }while(destination.x>=width-size||destination.x<=0||destination.y>=height-size||destination.y<=0);
+    if(this.location.dist(this.destination) < 30){
+      newDestination();
     }
     PVector dir = PVector.sub(this.destination, this.location);
     dir.normalize();
-    dir.mult(0.6f);
+    dir.mult(0.06f);
     this.acceleration = dir;
   }
 
+  public void newDestination(){
+    do{
+      int distance = (int) random(30, 300);
+      this.destination = new PVector(random(this.location.x-distance, this.location.x+distance), random(this.location.y-distance, this.location.y+distance));
+    }while((destination.x>=width-size||destination.x<=0)||(destination.y>=height-size||destination.y<=0));
+  }
+
   public void checkEdges(){
-    if (location.x > width) {
-      location.x = width;
+    if (location.x+size > width) {
+      location.x = width-size;
     } else if (location.x < 0) {
-      location.x = 0;
+      location.x = 1;
     }
 
     if (location.y+size > height) {
       location.y = height-size;
     }  else if (location.y < 0) {
-      location.y = 0;
+      location.y = 1;
     }
   }
 
@@ -110,6 +116,7 @@ class Creature{
     rect(this.location.x, this.location.y, this.size, this.size);
   }
 }
+
 /*
 2500 limit
 */
@@ -170,28 +177,6 @@ class Population{
     }
   }
 }
-
-
-// Creature[] appends(Creature[] array, Creature value){
-//   Creature[] arr = new Creature[array.length+1];
-//   for(int i = 0; i < array.length; i++){
-//     arr[i] = array[i];
-//   }
-//   arr[arr.length-1] = value;
-//   return arr;
-// }
-//
-// Creature[] removeByIndex(Creature[] array, index){
-//   Creature[] temp;
-//   if(array.length > 0){
-//     temp = new Creature[array.length - 1];
-//     arrayCopy(array, 0, temp, 0, index);
-//     arrayCopy(array, index, temp, index, )
-//   } else{
-//     temp = array;
-//   }
-//   return temp;
-// }
   public void settings() {  size(600, 600); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "ecosystem" };
