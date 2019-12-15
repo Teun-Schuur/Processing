@@ -13,7 +13,7 @@ class Population{
 
   Population(int begin_pop){
     for(int i = 0; i < begin_pop; i++){
-      creatures.add(new Creature(new PVector(random(width), random(height))));
+      creatures.add(new Creature(new PVector(random(width), random(height)), 2.0f));
     }
     spontaneous_birth_rate = 0f; // x% chance per second for spaning a nieuw creature
     death_rate = 0.2f;           // x% chance per second for despaning a creature
@@ -46,7 +46,7 @@ class Population{
       Creature c = creatures.get(i);
       // spaning
       if(random(1) < replication_rate){
-        creatures.add(new Creature(new PVector(c.location.x, c.location.y)));
+        creatures.add(new Creature(new PVector(c.location.x, c.location.y), 2f));
       }
       // despaning
       if(random(1) < death_rate){
@@ -54,7 +54,7 @@ class Population{
       }
     }
     if(random(0, 1) < spontaneous_birth_rate){
-      this.creatures.add(new Creature(new PVector(random(width), random(height))));
+      this.creatures.add(new Creature(new PVector(random(width), random(height)), 2f));
     }
   }
 }

@@ -3,14 +3,17 @@
 */
 
 class Mutation{
-  static final int ONE_DAY = 10*60 // one day = 10 seconds
+  static final int ONE_DAY = 10*60; // one day = 10 seconds
   ArrayList<Creature> creatures = new ArrayList<Creature>();
+  PVector[] foods = new PVector[20];
   int[] creatures_history = new int[100];
 
   Mutation(int begin_pop, float begin_speed){
     for(int i = 0; i < begin_pop; i++){
-      creatures.add(new Creature(new PVector(random(width), random(height))));
-      creatures.get(i).speed = begin_speed;
+      creatures.add(new Creature(new PVector(random(width), random(height)), begin_speed));
+    }
+    for(int i = 0; i < foods.length; i++){
+      foods[i] = new PVector(random(width), random(height));
     }
   }
 
@@ -20,29 +23,30 @@ class Mutation{
       c.update();
       c.checkEdges();
     }
-    if(frameRate%ONE_DAY)
+    if(frameRate%ONE_DAY==0){
+      evolution();
+    }
   }
 
   public void show(){
     for(int i = 0; i < creatures.size(); i++){
       creatures.get(i).show();
     }
+    for(int i = 0; i < foods.length; i++){
+      push();
+      fill(0, 255, 0);
+      ellipse(foods[i].x, foods[i].y, 10, 10);
+      pop();
+    }
   }
 
   private void evolution(){
     for(int i = creatures.size() - 1; i >= 0; i--){
       Creature c = creatures.get(i);
-      // spaning
-      if(random(1) < replication_rate){
-        creatures.add(new Creature(new PVector(c.location.x, c.location.y)));
-      }
-      // despaning
-      if(random(1) < death_rate){
-        creatures.remove(i);
-      }
-    }
-    if(random(0, 1) < spontaneous_birth_rate){
-      this.creatures.add(new Creature(new PVector(random(width), random(height))));
     }
   }
 }
+
+
+//  creatures.remove(i);
+//  creatures.add(i);

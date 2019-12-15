@@ -15,11 +15,12 @@ import java.io.IOException;
 public class ecosystem extends PApplet {
 
 
-Population toine;
+Mutation toine;
+
 public void setup(){
   
   frameRate(60);
-  toine = new Population(50);
+  toine = new Mutation(5, 2.0f);
 }
 
 public void draw(){
@@ -57,24 +58,24 @@ class Creature{
   PVector acceleration;
   PVector destination;
   float size;
-  float topspeed;
-  // int age = 0;
+  float speed;
+  float energy = 1;
   // int death_age = round(60*random(5, 20));
 
-  Creature(PVector location){
+  Creature(PVector location, float speed){
     this.location = location;
     this.velocity = new PVector(0, 0);
     this.destination = new PVector(0, 0);
     newDestination();
     this.acceleration = new PVector(0, 0);
-    size = 30;
-    topspeed = 2.0f;
+    this.size = 30;
+    this.speed = speed;
   }
 
   public void update(){
     // age++;
     this.velocity.add(this.acceleration);
-    this.velocity.limit(topspeed);
+    this.velocity.limit(speed);
     this.location.add(this.velocity);
     this.toLocation();
 
@@ -111,12 +112,67 @@ class Creature{
     }
   }
 
+  public void energyCalculation(){
+
+  }
+
   public void show(){
     fill(200, 0, 220);
     rect(this.location.x, this.location.y, this.size, this.size);
   }
 }
+/*
+2500 limit
+*/
 
+class Mutation{
+  static final int ONE_DAY = 10*60; // one day = 10 seconds
+  ArrayList<Creature> creatures = new ArrayList<Creature>();
+  PVector[] foods = new PVector[20];
+  int[] creatures_history = new int[100];
+
+  Mutation(int begin_pop, float begin_speed){
+    for(int i = 0; i < begin_pop; i++){
+      creatures.add(new Creature(new PVector(random(width), random(height)), begin_speed));
+    }
+    for(int i = 0; i < foods.length; i++){
+      foods[i] = new PVector(random(width), random(height));
+    }
+  }
+
+  public void update(){
+    for(int i = 0; i < creatures.size(); i++){
+      Creature c = creatures.get(i);
+      c.update();
+      c.checkEdges();
+    }
+    if(frameRate%ONE_DAY==0){
+      evolution();
+    }
+  }
+
+  public void show(){
+    for(int i = 0; i < creatures.size(); i++){
+      creatures.get(i).show();
+    }
+    for(int i = 0; i < foods.length; i++){
+      push();
+      fill(0, 255, 0);
+      ellipse(foods[i].x, foods[i].y, 10, 10);
+      pop();
+    }
+  }
+
+  private void evolution(){
+    for(int i = creatures.size() - 1; i >= 0; i--){
+      Creature c = creatures.get(i);
+    }
+  }
+}
+
+
+//  creatures.remove(i);
+//  creatures.add(i);
 /*
 2500 limit
 */
@@ -132,7 +188,7 @@ class Population{
 
   Population(int begin_pop){
     for(int i = 0; i < begin_pop; i++){
-      creatures.add(new Creature(new PVector(random(width), random(height))));
+      creatures.add(new Creature(new PVector(random(width), random(height)), 2.0f));
     }
     spontaneous_birth_rate = 0f; // x% chance per second for spaning a nieuw creature
     death_rate = 0.2f;           // x% chance per second for despaning a creature
@@ -165,7 +221,7 @@ class Population{
       Creature c = creatures.get(i);
       // spaning
       if(random(1) < replication_rate){
-        creatures.add(new Creature(new PVector(c.location.x, c.location.y)));
+        creatures.add(new Creature(new PVector(c.location.x, c.location.y), 2f));
       }
       // despaning
       if(random(1) < death_rate){
@@ -173,7 +229,7 @@ class Population{
       }
     }
     if(random(0, 1) < spontaneous_birth_rate){
-      this.creatures.add(new Creature(new PVector(random(width), random(height))));
+      this.creatures.add(new Creature(new PVector(random(width), random(height)), 2f));
     }
   }
 }

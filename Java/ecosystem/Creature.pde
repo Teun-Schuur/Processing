@@ -6,24 +6,24 @@ class Creature{
   PVector acceleration;
   PVector destination;
   float size;
-  float topspeed;
-  // int age = 0;
+  float speed;
+  float energy = 1;
   // int death_age = round(60*random(5, 20));
 
-  Creature(PVector location){
+  Creature(PVector location, float speed){
     this.location = location;
     this.velocity = new PVector(0, 0);
     this.destination = new PVector(0, 0);
     newDestination();
     this.acceleration = new PVector(0, 0);
-    size = 30;
-    topspeed = 2.0f;
+    this.size = 30;
+    this.speed = speed;
   }
 
   void update(){
     // age++;
     this.velocity.add(this.acceleration);
-    this.velocity.limit(topspeed);
+    this.velocity.limit(speed);
     this.location.add(this.velocity);
     this.toLocation();
 
@@ -58,6 +58,10 @@ class Creature{
     }  else if (location.y < 0) {
       location.y = 1;
     }
+  }
+
+  void energyCalculation(){
+
   }
 
   void show(){

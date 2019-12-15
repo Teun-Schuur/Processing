@@ -1,9 +1,10 @@
 
-Population toine;
+Mutation toine;
+
 void setup(){
   size(600, 600);
   frameRate(60);
-  toine = new Population(50);
+  toine = new Mutation(5, 2.0f);
 }
 
 void draw(){
