@@ -37,7 +37,7 @@ class Population{
 
   public void show(){
     for(int i = 0; i < creatures.size(); i++){
-      creatures.get(i).show();
+      creatures.get(i).show(3f);
     }
   }
 

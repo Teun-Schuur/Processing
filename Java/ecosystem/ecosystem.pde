@@ -3,13 +3,13 @@ Mutation toine;
 
 void setup(){
   size(800, 800);
-  frameRate(60);
-  toine = new Mutation(50, 1f);
+  frameRate(100);
+  toine = new Mutation(4, 1f);
 }
 
 void draw(){
   background(255);
-  for(int i = 0; i<1; i++){
+  for(int i = 0; i<3; i++){
     toine.update();
   }
   toine.show();

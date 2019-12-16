@@ -19,13 +19,13 @@ Mutation toine;
 
 public void setup(){
   
-  frameRate(60);
-  toine = new Mutation(50, 1f);
+  frameRate(100);
+  toine = new Mutation(4, 1f);
 }
 
 public void draw(){
   background(255);
-  for(int i = 0; i<1; i++){
+  for(int i = 0; i<3; i++){
     toine.update();
   }
   toine.show();
@@ -55,17 +55,18 @@ public void calcMean(){
 
 
 class Creature{
-  static final float MUTATE_CHANGE = 0.3f;
+  static final float MUTATE_CHANGE = 0.1f;
+  static final float BEGIN_ENERGY = 1800;
   PVector location;
   PVector velocity;
   PVector acceleration;
   PVector destination;
   float size;
   float speed;
-  float energy = 800;
+  float energy = BEGIN_ENERGY;
   float food = 0;
   boolean home = false;
-  // int death_age = round(60*random(5, 20));
+  boolean goingHome = false;
 
   Creature(PVector location){
     this.location = location;
@@ -73,12 +74,14 @@ class Creature{
     this.destination = new PVector(0, 0);
     this.newDestination();
     this.acceleration = new PVector(0, 0);
-    this.size = 30;
+    this.size = 50;
   }
 
   public void update(){
     this.velocity.add(this.acceleration);
-    if(home){
+    if(goingHome){
+      this.velocity.limit(speed*1.8f+1);
+    }else if(home){
       this.velocity.limit(0);
     }else{
       this.velocity.limit(speed);
@@ -88,7 +91,15 @@ class Creature{
   }
 
   public void newLocation(){
-    location = new PVector(random(50, width-50), random(50, height-50));
+    if(location.x > width/2){
+      this.location = new PVector(width-(size+2), this.location.y);
+    }else if(location.x <= width/2){
+      this.location = new PVector(1, this.location.y);
+    }if(location.y > height-height/3){
+      this.location = new PVector(this.location.x, height-(size+2));
+    }else if(location.y <= height/3){
+      this.location = new PVector(this.location.x, 1);
+    }
   }
 
   private void toLocation(){
@@ -102,8 +113,17 @@ class Creature{
   }
 
   private void newDestination(){
-    if(food>=2){
-      this.destination = new PVector(width, this.location.y);
+    if(food>=1){
+      goingHome = true;
+      if(location.x > width/2){
+        this.destination = new PVector(width, this.location.y);
+      }else if(location.x <= width/2){
+        this.destination = new PVector(0, this.location.y);
+      }if(location.y > height-height/3){
+        this.destination = new PVector(this.location.x, height);
+      }else if(location.y <= height/3){
+        this.destination = new PVector(this.location.x, 0);
+      }
     }else{
       do{
         int distance = (int) random(50, 300);
@@ -113,11 +133,11 @@ class Creature{
   }
 
   public Creature mutate(){
-    Creature child = new Creature(this.destination);
+    Creature child = new Creature(destination);
     if(random(1)<0.5f){
-      child.speed = speed + Creature.MUTATE_CHANGE;
+      child.speed = speed + random(Creature.MUTATE_CHANGE);
     }else{
-      child.speed = speed - Creature.MUTATE_CHANGE;
+      child.speed = speed - random(Creature.MUTATE_CHANGE);
     }
     // println("child: ", child.speed, "  parend: ", this.speed, "  same?: ", child==this);
     return child;
@@ -135,18 +155,23 @@ class Creature{
     }  else if (location.y < 0) {
       home = true;
     }
+    if(home){
+      goingHome = false;
+    }
   }
 
   public void energyCalculation(){
-    this.energy -= speed*speed+1;
+    if(!home){
+      this.energy -= speed*speed+1;
+    }
   }
 
   public void foundFoot(){
     food++;
   }
 
-  public void show(){
-    fill(map(speed, 0, 6, 20, 255), 0, map(speed, 0, 6, 20, 255));
+  public void show(float max){
+    fill(map(speed, 0, max, 20, 255), 0, map(speed, 0, max, 20, 255));
     rect(this.location.x, this.location.y, this.size, this.size);
   }
 }
@@ -155,17 +180,17 @@ class Creature{
 */
 
 class Mutation{
-  static final int ONE_DAY = 4*60; // one day = 4 seconds
-  static final int TIME_STEP = 600 / ONE_DAY; // 4 times per second
+  static final int ONE_DAY = 10*100; // one day = 4 seconds
+  static final int TIME_STEP = (int) (2000 / ONE_DAY); // 60000 times a day
   ArrayList<Creature> creatures = new ArrayList<Creature>();
   ArrayList<PVector> foods = new ArrayList<PVector>();
-  int[] creatures_history = new int[100];
   long frame = 0;
-  int food = 80;
+  int food = 100;
+  Creature fastest;
 
   Mutation(int begin_pop, float begin_speed){
     for(int i = 0; i < begin_pop; i++){
-      Creature c = new Creature(new PVector(random(width), random(height)));
+      Creature c = new Creature(new PVector(random(50, width-50), random(50, height-50)));
       c.speed = begin_speed;
       creatures.add(c);
     }
@@ -179,6 +204,9 @@ class Mutation{
       Creature c = creatures.get(i);
       c.update();
       c.checkEdges();
+      if(fastest==null || fastest.speed < c.speed){
+        fastest = c;
+      }
       for(int j = foods.size() - 1; j >= 0; j--){
         if(foods.get(j).dist(PVector.add(c.location, new PVector(c.size/2, c.size/2))) < c.size){
           c.foundFoot();
@@ -189,17 +217,17 @@ class Mutation{
         c.energyCalculation();
         if(c.energy <= 0){
           creatures.remove(i);
-          println("death by to low foot");
+          // println("death by to low energy");
         }
       }
     }
 
     if(frame%ONE_DAY==0){
-      if((5 < food) && (food < 400)){
-        food -= 1;
-      }else if(food >= 400){
-        food -= 5;
-      }
+      // if((5 < food) && (food < 400)){
+      //   food -= 1;
+      // }else if(food >= 400){
+      //   food -= 5;
+      // }
       makeNiewFood();
       evolution();
     }
@@ -207,12 +235,12 @@ class Mutation{
 
   public void show(){
     for(int i = 0; i < creatures.size(); i++){
-      creatures.get(i).show();
+      creatures.get(i).show(fastest.speed);
     }
     for(PVector food : foods){
       push();
       fill(0, 255, 0);
-      ellipse(food.x, food.y, 5, 5);
+      ellipse(food.x, food.y, 15, 15);
       pop();
     }
   }
@@ -240,8 +268,9 @@ class Mutation{
         creatures.add(c.mutate());
       }
       c.food = 0;
-      c.energy = 800;
+      c.energy = Creature.BEGIN_ENERGY;
       c.newLocation();
+      c.newDestination();
       c.home = false;
       prfC = c;
     }
@@ -291,7 +320,7 @@ class Population{
 
   public void show(){
     for(int i = 0; i < creatures.size(); i++){
-      creatures.get(i).show();
+      creatures.get(i).show(3f);
     }
   }
 
