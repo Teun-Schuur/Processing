@@ -9,7 +9,7 @@ void setup(){
 
 void draw(){
   background(255);
-  for(int i = 0; i<10; i++){
+  for(int i = 0; i<1; i++){
     toine.update();
   }
   toine.show();

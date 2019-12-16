@@ -89,6 +89,8 @@ class Mutation{
       }
       c.food = 0;
       c.energy = 800;
+      c.newLocation();
+      c.home = false;
       prfC = c;
     }
     println("food: ", food, "size: ", cSize, "\tmean speed: ", speedSum/cSize, "\tmean energy: ", energySum/cSize);

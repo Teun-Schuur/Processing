@@ -10,6 +10,7 @@ class Creature{
   float speed;
   float energy = 800;
   float food = 0;
+  boolean home = false;
   // int death_age = round(60*random(5, 20));
 
   Creature(PVector location){
@@ -23,9 +24,17 @@ class Creature{
 
   void update(){
     this.velocity.add(this.acceleration);
-    this.velocity.limit(speed);
+    if(home){
+      this.velocity.limit(0);
+    }else{
+      this.velocity.limit(speed);
+    }
     this.location.add(this.velocity);
     this.toLocation();
+  }
+
+  void newLocation(){
+    location = new PVector(random(50, width-50), random(50, height-50));
   }
 
   private void toLocation(){
@@ -39,10 +48,14 @@ class Creature{
   }
 
   private void newDestination(){
-    do{
-      int distance = (int) random(50, 300);
-      this.destination = new PVector(random(this.location.x-distance, this.location.x+distance), random(this.location.y-distance, this.location.y+distance));
-    }while((destination.x>=width-size||destination.x<=0)||(destination.y>=height-size||destination.y<=0));
+    if(food>=2){
+      this.destination = new PVector(width, this.location.y);
+    }else{
+      do{
+        int distance = (int) random(50, 300);
+        this.destination = new PVector(random(this.location.x-distance, this.location.x+distance), random(this.location.y-distance, this.location.y+distance));
+      }while((destination.x>=width-size||destination.x<=0)||(destination.y>=height-size||destination.y<=0));
+    }
   }
 
   Creature mutate(){
@@ -58,15 +71,15 @@ class Creature{
 
   void checkEdges(){
     if (location.x+size > width) {
-      location.x = width-size;
+      home = true;
     } else if (location.x < 0) {
-      location.x = 1;
+      home = true;
     }
 
     if (location.y+size > height) {
-      location.y = height-size;
+      home = true;
     }  else if (location.y < 0) {
-      location.y = 1;
+      home = true;
     }
   }
 
