@@ -1,6 +1,7 @@
 
 
 class Creature{
+  static final float MUTATE_CHANGE = 0.3;
   PVector location;
   PVector velocity;
   PVector acceleration;
@@ -8,25 +9,24 @@ class Creature{
   float size;
   float speed;
   float energy = 1;
+  int food = 0;
   // int death_age = round(60*random(5, 20));
 
-  Creature(PVector location, float speed){
+  Creature(PVector location){
     this.location = location;
     this.velocity = new PVector(0, 0);
     this.destination = new PVector(0, 0);
-    newDestination();
+    this.newDestination();
     this.acceleration = new PVector(0, 0);
     this.size = 30;
-    this.speed = speed;
   }
 
   void update(){
-    // age++;
     this.velocity.add(this.acceleration);
     this.velocity.limit(speed);
     this.location.add(this.velocity);
     this.toLocation();
-
+    this.energyCalculation();
   }
 
   private void toLocation(){
@@ -35,15 +35,26 @@ class Creature{
     }
     PVector dir = PVector.sub(this.destination, this.location);
     dir.normalize();
-    dir.mult(0.06);
+    dir.mult(0.9);
     this.acceleration = dir;
   }
 
-  void newDestination(){
+  private void newDestination(){
     do{
-      int distance = (int) random(30, 300);
+      int distance = (int) random(50, 300);
       this.destination = new PVector(random(this.location.x-distance, this.location.x+distance), random(this.location.y-distance, this.location.y+distance));
     }while((destination.x>=width-size||destination.x<=0)||(destination.y>=height-size||destination.y<=0));
+  }
+
+  Creature mutate(){
+    Creature child = new Creature(this.destination);
+    if(random(1)<0.5){
+      child.speed = speed + Creature.MUTATE_CHANGE;
+    }else{
+      child.speed = speed - Creature.MUTATE_CHANGE;
+    }
+    // println("child: ", child.speed, "  parend: ", this.speed, "  same?: ", child==this);
+    return child;
   }
 
   void checkEdges(){
@@ -60,12 +71,17 @@ class Creature{
     }
   }
 
-  void energyCalculation(){
+  private void energyCalculation(){
+    this.energy -= this.speed/Mutation.ONE_DAY;
+  }
 
+  void foundFoot(){
+    energy++;
+    food++;
   }
 
   void show(){
-    fill(200, 0, 220);
+    fill(map(speed, 0, 6, 20, 255), 0, map(speed, 0, 6, 20, 255));
     rect(this.location.x, this.location.y, this.size, this.size);
   }
 }
