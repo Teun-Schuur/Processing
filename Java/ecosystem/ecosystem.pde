@@ -2,14 +2,14 @@
 Mutation toine;
 
 void setup(){
-  fullScreen();
+  size(800, 800);
   frameRate(60);
-  toine = new Mutation(5, 2f);
+  toine = new Mutation(50, 1f);
 }
 
 void draw(){
   background(255);
-  for(int i = 0; i<2; i++){
+  for(int i = 0; i<10; i++){
     toine.update();
   }
   toine.show();

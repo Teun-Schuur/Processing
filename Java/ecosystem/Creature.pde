@@ -8,8 +8,8 @@ class Creature{
   PVector destination;
   float size;
   float speed;
-  float energy = 1;
-  int food = 0;
+  float energy = 800;
+  float food = 0;
   // int death_age = round(60*random(5, 20));
 
   Creature(PVector location){
@@ -26,7 +26,6 @@ class Creature{
     this.velocity.limit(speed);
     this.location.add(this.velocity);
     this.toLocation();
-    this.energyCalculation();
   }
 
   private void toLocation(){
@@ -71,12 +70,11 @@ class Creature{
     }
   }
 
-  private void energyCalculation(){
-    this.energy -= this.speed/Mutation.ONE_DAY;
+  void energyCalculation(){
+    this.energy -= speed*speed+1;
   }
 
   void foundFoot(){
-    energy++;
     food++;
   }
 
