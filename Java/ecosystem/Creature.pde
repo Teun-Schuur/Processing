@@ -1,14 +1,16 @@
 
 
 class Creature{
-  static final float MUTATE_CHANGE = 0.1;
+  static final float MUTATE_CHANGE = 0.4;
   static final float BEGIN_ENERGY = 1800;
+  static final int BEGIN_SIZE = 50;
   PVector location;
   PVector velocity;
   PVector acceleration;
   PVector destination;
   float size;
   float speed;
+  float sense;
   float energy = BEGIN_ENERGY;
   float food = 0;
   boolean home = false;
@@ -17,13 +19,20 @@ class Creature{
   Creature(PVector location){
     this.location = location;
     this.velocity = new PVector(0, 0);
-    this.destination = new PVector(0, 0);
-    this.newDestination();
     this.acceleration = new PVector(0, 0);
-    this.size = 50;
+    this.size = Creature.BEGIN_SIZE;
+    this.sense = 1;
+    float tempX = floor(random(1, (width - size) / size)) * size;
+    float tempY = floor(random(1, (width - size) / size)) * size;
+    this.destination = new PVector(tempX, tempY);
   }
 
-  void update(){
+  void update(PVector[] foods){
+    if(destination == null || PVector.add(this.location, new PVector(size/2, size/2)).dist(this.destination) < size/2){
+      newDestination(foods);
+    }
+    newDestination();
+    toLocation();
     this.velocity.add(this.acceleration);
     if(goingHome){
       this.velocity.limit(speed*1.8+1);
@@ -33,7 +42,6 @@ class Creature{
       this.velocity.limit(speed);
     }
     this.location.add(this.velocity);
-    this.toLocation();
   }
 
   void newLocation(){
@@ -49,17 +57,26 @@ class Creature{
   }
 
   private void toLocation(){
-    if(this.location.dist(this.destination) < 30){
-      newDestination();
-    }
     PVector dir = PVector.sub(this.destination, this.location);
     dir.normalize();
     dir.mult(0.9);
     this.acceleration = dir;
   }
 
+  private void newDestination(PVector[] foods){
+    float tempX = floor(random(1, (width - size) / size)) * size;
+    float tempY = floor(random(1, (width - size) / size)) * size;
+    this.destination.set(tempX, tempY, 0);
+    for(int i = 0; i < foods.length; i++){
+      if (foods[i] != null && location.dist(foods[i]) <= sense*size){
+        this.destination = foods[i];
+        break;
+      }
+    }
+  }
+
   private void newDestination(){
-    if(food>=1){
+    if(food>=2){
       goingHome = true;
       if(location.x > width/2){
         this.destination = new PVector(width, this.location.y);
@@ -70,11 +87,6 @@ class Creature{
       }else if(location.y <= height/3){
         this.destination = new PVector(this.location.x, 0);
       }
-    }else{
-      do{
-        int distance = (int) random(50, 300);
-        this.destination = new PVector(random(this.location.x-distance, this.location.x+distance), random(this.location.y-distance, this.location.y+distance));
-      }while((destination.x>=width-size||destination.x<=0)||(destination.y>=height-size||destination.y<=0));
     }
   }
 
@@ -82,8 +94,10 @@ class Creature{
     Creature child = new Creature(destination);
     if(random(1)<0.5){
       child.speed = speed + random(Creature.MUTATE_CHANGE);
+      child.sense = sense + random(Creature.MUTATE_CHANGE);
     }else{
       child.speed = speed - random(Creature.MUTATE_CHANGE);
+      child.sense = sense - random(Creature.MUTATE_CHANGE);
     }
     // println("child: ", child.speed, "  parend: ", this.speed, "  same?: ", child==this);
     return child;
@@ -91,14 +105,20 @@ class Creature{
 
   void checkEdges(){
     if (location.x+size > width) {
+      location.x = width-size;
       home = true;
     } else if (location.x < 0) {
+      destination.y = location.y;
+      location.x = 0;
       home = true;
     }
 
     if (location.y+size > height) {
+      location.y = height-size;
       home = true;
     }  else if (location.y < 0) {
+      location.y = 0;
+      destination.x = location.x;
       home = true;
     }
     if(home){
@@ -108,7 +128,7 @@ class Creature{
 
   void energyCalculation(){
     if(!home){
-      this.energy -= speed*speed+1;
+      this.energy -= speed*speed + sense;
     }
   }
 

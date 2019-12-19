@@ -4,12 +4,12 @@ Mutation toine;
 void setup(){
   size(800, 800);
   frameRate(100);
-  toine = new Mutation(4, 1f);
+  toine = new Mutation(20, 1f);
 }
 
 void draw(){
   background(255);
-  for(int i = 0; i<3; i++){
+  for(int i = 0; i<1; i++){
     toine.update();
   }
   toine.show();

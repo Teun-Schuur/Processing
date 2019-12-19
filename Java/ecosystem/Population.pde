@@ -24,7 +24,7 @@ class Population{
     timeSteps++;
     for(int i = 0; i < creatures.size(); i++){
       Creature c = creatures.get(i);
-      c.update();
+      //c.update();
       c.checkEdges();
     }
     if(timeSteps % Population.TIME_STEP == 0){
