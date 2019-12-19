@@ -16,41 +16,51 @@ public class ecosystem extends PApplet {
 
 
 Mutation toine;
+ParalelSim sim = new ParalelSim();
 
 public void setup(){
   
   frameRate(100);
-  toine = new Mutation(20, 1f);
+  toine = new Mutation(20);
 }
 
 public void draw(){
   background(255);
-  for(int i = 0; i<1; i++){
+  for(int i = 0; i<3; i++){
     toine.update();
   }
   toine.show();
+  sim.step();
 }
 
 
-public void calcMean(){
-  int populations = 2000;
-  Population[] toines = new Population[populations];
-  int[] lastPop = new int[populations];
-  int sum = 0;
-
-  for(int i = 0; i < populations; i++){
-    toines[i] = new Population(5);
-  }
-  for(int j = 0; j < 99*60; j++){
-    for(int i = 0; i < populations; i++){
-      toines[i].update();
+class ParalelSim{
+  int size;
+  int beginSize;
+  Mutation[] sim;
+  int[] lastPop;
+  int sum;
+  ParalelSim(){
+    size = 2000;
+    beginSize = 5;
+    sim = new Mutation[size];
+    lastPop = new int[size];
+    sum = 0;
+    for(int i = 0; i < size; i++){
+      sim[i] = new Mutation(beginSize);
     }
   }
-  for(int i = 0; i < lastPop.length; i++){
-    sum += toines[i].creatures_history[99];
-    lastPop[i] = toines[i].creatures_history[99];
+
+  public void step(){
+    for(int i = 0; i < size; i++){
+      sim[i].update();
+    }
+    for(int i = 0; i < lastPop.length; i++){
+      sum += sim[i].creatures_history[99];
+      lastPop[i] = sim[i].creatures_history[99];
+    }
+    println(PApplet.parseFloat(sum)/lastPop.length);
   }
-  println(PApplet.parseFloat(sum)/lastPop.length);
 }
 
 
@@ -76,6 +86,7 @@ class Creature{
     this.acceleration = new PVector(0, 0);
     this.size = Creature.BEGIN_SIZE;
     this.sense = 1;
+    this.speed = 1;
     float tempX = floor(random(1, (width - size) / size)) * size;
     float tempY = floor(random(1, (width - size) / size)) * size;
     this.destination = new PVector(tempX, tempY);
@@ -85,6 +96,7 @@ class Creature{
     if(destination == null || PVector.add(this.location, new PVector(size/2, size/2)).dist(this.destination) < size/2){
       newDestination(foods);
     }
+    setDestinationSense(foods);
     newDestination();
     toLocation();
     this.velocity.add(this.acceleration);
@@ -121,6 +133,9 @@ class Creature{
     float tempX = floor(random(1, (width - size) / size)) * size;
     float tempY = floor(random(1, (width - size) / size)) * size;
     this.destination.set(tempX, tempY, 0);
+  }
+
+  private void setDestinationSense(PVector[] foods){
     for(int i = 0; i < foods.length; i++){
       if (foods[i] != null && location.dist(foods[i]) <= sense*size){
         this.destination = foods[i];
@@ -191,7 +206,7 @@ class Creature{
   }
 
   public void show(float max){
-    fill(map(speed, 0, max, 20, 255), 0, map(speed, 0, max, 20, 255));
+    fill(map(speed, 0, max+1, 20, 255), 0, map(speed, 0, max+1, 20, 255));
     rect(this.location.x, this.location.y, this.size, this.size);
   }
 }
@@ -206,10 +221,9 @@ class Mutation{
   int food = 100;
   Creature fastest;
 
-  Mutation(int begin_pop, float begin_speed){
+  Mutation(int begin_pop){
     for(int i = 0; i < begin_pop; i++){
       Creature c = new Creature(new PVector(random(50, width-50), random(50, height-50)));
-      c.speed = begin_speed;
       creatures.add(c);
     }
     // food

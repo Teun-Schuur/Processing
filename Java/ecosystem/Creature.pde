@@ -22,6 +22,7 @@ class Creature{
     this.acceleration = new PVector(0, 0);
     this.size = Creature.BEGIN_SIZE;
     this.sense = 1;
+    this.speed = 1;
     float tempX = floor(random(1, (width - size) / size)) * size;
     float tempY = floor(random(1, (width - size) / size)) * size;
     this.destination = new PVector(tempX, tempY);
@@ -31,6 +32,7 @@ class Creature{
     if(destination == null || PVector.add(this.location, new PVector(size/2, size/2)).dist(this.destination) < size/2){
       newDestination(foods);
     }
+    setDestinationSense(foods);
     newDestination();
     toLocation();
     this.velocity.add(this.acceleration);
@@ -67,6 +69,9 @@ class Creature{
     float tempX = floor(random(1, (width - size) / size)) * size;
     float tempY = floor(random(1, (width - size) / size)) * size;
     this.destination.set(tempX, tempY, 0);
+  }
+
+  private void setDestinationSense(PVector[] foods){
     for(int i = 0; i < foods.length; i++){
       if (foods[i] != null && location.dist(foods[i]) <= sense*size){
         this.destination = foods[i];
@@ -137,7 +142,7 @@ class Creature{
   }
 
   void show(float max){
-    fill(map(speed, 0, max, 20, 255), 0, map(speed, 0, max, 20, 255));
+    fill(map(speed, 0, max+1, 20, 255), 0, map(speed, 0, max+1, 20, 255));
     rect(this.location.x, this.location.y, this.size, this.size);
   }
 }
