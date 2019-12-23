@@ -16,7 +16,7 @@ public class ecosystem extends PApplet {
 
 
 Mutation toine;
-ParalelSim sim = new ParalelSim();
+// ParalelSim sim = new ParalelSim();
 
 public void setup(){
   
@@ -26,48 +26,55 @@ public void setup(){
 
 public void draw(){
   background(255);
-  for(int i = 0; i<3; i++){
-    toine.update();
+  if(toine.food <= 10){
+    for(int i = 0; i<3; i++){
+      toine.update();
+    }
+  }
+  else{
+    for(int i = 0; i<1000; i++){
+      toine.update();
+    }
   }
   toine.show();
-  sim.step();
+  // sim.step();
 }
-
-
-class ParalelSim{
-  int size;
-  int beginSize;
-  Mutation[] sim;
-  int[] lastPop;
-  int sum;
-  ParalelSim(){
-    size = 2000;
-    beginSize = 5;
-    sim = new Mutation[size];
-    lastPop = new int[size];
-    sum = 0;
-    for(int i = 0; i < size; i++){
-      sim[i] = new Mutation(beginSize);
-    }
-  }
-
-  public void step(){
-    for(int i = 0; i < size; i++){
-      sim[i].update();
-    }
-    for(int i = 0; i < lastPop.length; i++){
-      sum += sim[i].creatures_history[99];
-      lastPop[i] = sim[i].creatures_history[99];
-    }
-    println(PApplet.parseFloat(sum)/lastPop.length);
-  }
-}
+//
+//
+// class ParalelSim{
+//   int size;
+//   int beginSize;
+//   Mutation[] sim;
+//   int[] lastPop;
+//   int sum;
+//   ParalelSim(){
+//     size = 2000;
+//     beginSize = 5;
+//     sim = new Mutation[size];
+//     lastPop = new int[size];
+//     sum = 0;
+//     for(int i = 0; i < size; i++){
+//       sim[i] = new Mutation(beginSize);
+//     }
+//   }
+//
+//   void step(){
+//     for(int i = 0; i < size; i++){
+//       sim[i].update();
+//     }
+//     for(int i = 0; i < lastPop.length; i++){
+//       sum += sim[i].creatures_history[99];
+//       lastPop[i] = sim[i].creatures_history[99];
+//     }
+//     println(float(sum)/lastPop.length);
+//   }
+// }
 
 
 class Creature{
-  static final float MUTATE_CHANGE = 0.4f;
+  static final float MUTATE_CHANGE = 0.5f;
   static final float BEGIN_ENERGY = 1800;
-  static final int BEGIN_SIZE = 50;
+  static final int BEGIN_SIZE = 60;
   PVector location;
   PVector velocity;
   PVector acceleration;
@@ -111,11 +118,12 @@ class Creature{
   }
 
   public void newLocation(){
-    if(location.x > width/2){
+    goingHome = true;
+    if(location.x >= width/2){
       this.location = new PVector(width-(size+2), this.location.y);
     }else if(location.x <= width/2){
       this.location = new PVector(1, this.location.y);
-    }if(location.y > height-height/3){
+    }if(location.y >= height-height/3){
       this.location = new PVector(this.location.x, height-(size+2));
     }else if(location.y <= height/3){
       this.location = new PVector(this.location.x, 1);
@@ -137,7 +145,7 @@ class Creature{
 
   private void setDestinationSense(PVector[] foods){
     for(int i = 0; i < foods.length; i++){
-      if (foods[i] != null && location.dist(foods[i]) <= sense*size){
+      if (foods[i] != null && location.dist(foods[i]) <= sense*2*size){
         this.destination = foods[i];
         break;
       }
@@ -255,13 +263,12 @@ class Mutation{
         }
       }
     }
-
-    if(frame%ONE_DAY==0){
+    if(frame%(ONE_DAY*10)==0){
       if((10 < food) && (food < 400)){
         food -= 1;
-      }else if(food >= 400){
-        food -= 5;
       }
+    }
+    if(frame%ONE_DAY==0){
       makeNiewFood();
       evolution();
     }

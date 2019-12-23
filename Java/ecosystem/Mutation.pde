@@ -43,13 +43,12 @@ class Mutation{
         }
       }
     }
-
-    if(frame%ONE_DAY==0){
+    if(frame%(ONE_DAY*10)==0){
       if((10 < food) && (food < 400)){
         food -= 1;
-      }else if(food >= 400){
-        food -= 5;
       }
+    }
+    if(frame%ONE_DAY==0){
       makeNiewFood();
       evolution();
     }

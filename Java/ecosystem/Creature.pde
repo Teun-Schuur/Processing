@@ -1,9 +1,9 @@
 
 
 class Creature{
-  static final float MUTATE_CHANGE = 0.4;
+  static final float MUTATE_CHANGE = 0.5;
   static final float BEGIN_ENERGY = 1800;
-  static final int BEGIN_SIZE = 50;
+  static final int BEGIN_SIZE = 60;
   PVector location;
   PVector velocity;
   PVector acceleration;
@@ -47,11 +47,12 @@ class Creature{
   }
 
   void newLocation(){
-    if(location.x > width/2){
+    goingHome = true;
+    if(location.x >= width/2){
       this.location = new PVector(width-(size+2), this.location.y);
     }else if(location.x <= width/2){
       this.location = new PVector(1, this.location.y);
-    }if(location.y > height-height/3){
+    }if(location.y >= height-height/3){
       this.location = new PVector(this.location.x, height-(size+2));
     }else if(location.y <= height/3){
       this.location = new PVector(this.location.x, 1);
@@ -73,7 +74,7 @@ class Creature{
 
   private void setDestinationSense(PVector[] foods){
     for(int i = 0; i < foods.length; i++){
-      if (foods[i] != null && location.dist(foods[i]) <= sense*size){
+      if (foods[i] != null && location.dist(foods[i]) <= sense*2*size){
         this.destination = foods[i];
         break;
       }
