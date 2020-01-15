@@ -6,11 +6,12 @@ void setup(){
   size(800, 800);
   frameRate(100);
   toine = new Mutation(20);
+  translate(x,y)
 }
 
 void draw(){
   background(255);
-  if(toine.food <= 10){
+  if(toine.food <= 20){
     for(int i = 0; i<3; i++){
       toine.update();
     }

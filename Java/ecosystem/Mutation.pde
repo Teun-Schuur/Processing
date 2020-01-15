@@ -38,9 +38,14 @@ class Mutation{
       if(frame%TIME_STEP==0){
         c.energyCalculation();
         if(c.energy <= 0){
+          int t = creatures.size();
           creatures.remove(i);
+          // println(creatures.size(), t);
           // println("death by to low energy");
         }
+      }
+      if(c.goingHome == false && c.home == false){
+        // println(c.location);
       }
     }
     if(frame%(ONE_DAY*10)==0){
@@ -93,7 +98,7 @@ class Mutation{
       c.food = 0;
       c.energy = Creature.BEGIN_ENERGY;
       c.newLocation();
-      c.newDestination(foods.toArray(new PVector[foods.size()]));
+      c.newRondomDestination();
       c.home = false;
       prfC = c;
     }

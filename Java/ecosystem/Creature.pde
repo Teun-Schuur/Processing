@@ -23,17 +23,15 @@ class Creature{
     this.size = Creature.BEGIN_SIZE;
     this.sense = 1;
     this.speed = 1;
-    float tempX = floor(random(1, (width - size) / size)) * size;
-    float tempY = floor(random(1, (width - size) / size)) * size;
-    this.destination = new PVector(tempX, tempY);
+    this.destination = new PVector(0, 0);
+    this.newRondomDestination();
   }
 
   void update(PVector[] foods){
-    if(destination == null || PVector.add(this.location, new PVector(size/2, size/2)).dist(this.destination) < size/2){
-      newDestination(foods);
+    if(home == false && goingHome == false && PVector.add(this.location, new PVector(size/2, size/2)).dist(this.destination) < size/2){
+      newRondomDestination();
     }
-    setDestinationSense(foods);
-    newDestination();
+    checkIfGoingHome(foods);
     toLocation();
     this.velocity.add(this.acceleration);
     if(goingHome){
@@ -47,51 +45,49 @@ class Creature{
   }
 
   void newLocation(){
-    goingHome = true;
     if(location.x >= width/2){
       this.location = new PVector(width-(size+2), this.location.y);
     }else if(location.x <= width/2){
-      this.location = new PVector(1, this.location.y);
+      this.location = new PVector(2, this.location.y);
     }if(location.y >= height-height/3){
       this.location = new PVector(this.location.x, height-(size+2));
     }else if(location.y <= height/3){
-      this.location = new PVector(this.location.x, 1);
+      this.location = new PVector(this.location.x, 2);
     }
   }
 
   private void toLocation(){
     PVector dir = PVector.sub(this.destination, this.location);
     dir.normalize();
-    dir.mult(0.9);
+    dir.mult(0.5);
     this.acceleration = dir;
   }
 
-  private void newDestination(PVector[] foods){
+  private void newRondomDestination(){
     float tempX = floor(random(1, (width - size) / size)) * size;
     float tempY = floor(random(1, (width - size) / size)) * size;
     this.destination.set(tempX, tempY, 0);
   }
 
-  private void setDestinationSense(PVector[] foods){
-    for(int i = 0; i < foods.length; i++){
-      if (foods[i] != null && location.dist(foods[i]) <= sense*2*size){
-        this.destination = foods[i];
-        break;
-      }
-    }
-  }
-
-  private void newDestination(){
+  private void checkIfGoingHome(PVector[] foods){
     if(food>=2){
       goingHome = true;
-      if(location.x > width/2){
+      if(location.x >= width/2){
         this.destination = new PVector(width, this.location.y);
       }else if(location.x <= width/2){
         this.destination = new PVector(0, this.location.y);
-      }if(location.y > height-height/3){
+      }if(location.y >= height-height/2.5){
         this.destination = new PVector(this.location.x, height);
-      }else if(location.y <= height/3){
+      }else if(location.y <= height/2.5){
         this.destination = new PVector(this.location.x, 0);
+      }
+    }
+    else if(goingHome == false){
+      for(int i = 0; i < foods.length; i++){
+        if (foods[i] != null && location.dist(foods[i]) <= sense*size){
+          this.destination = foods[i];
+          break;
+        }
       }
     }
   }
